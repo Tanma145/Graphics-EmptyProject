@@ -1,6 +1,7 @@
 #pragma once
-#include <msclr\marshal_cppstd.h>
-#include "TCalculator.h"
+//#include <string>
+#include <msclr/marshal_cppstd.h>
+#include "..\mp2-lab3-calculator\mp2-lab3-calculator\TCalculator.h"
 
 namespace CppWinForm1 {
 
@@ -36,10 +37,9 @@ namespace CppWinForm1 {
 				delete components;
 			}
 		}
+	private: System::Windows::Forms::Label^  label1;
 	private: System::Windows::Forms::Button^  button1;
 	private: System::Windows::Forms::TextBox^  textBox1;
-	private: System::Windows::Forms::Label^  label1;
-	private: System::Windows::Forms::Label^  label2;
 	protected:
 
 	private:
@@ -55,41 +55,47 @@ namespace CppWinForm1 {
 		/// </summary>
 		void InitializeComponent(void)
 		{
+			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->button1 = (gcnew System::Windows::Forms::Button());
 			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
-			this->label1 = (gcnew System::Windows::Forms::Label());
-			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->SuspendLayout();
-			this->button1->Location = System::Drawing::Point(276, 116);
+			// 
+			// label1
+			// 
+			this->label1->AutoSize = true;
+			this->label1->Location = System::Drawing::Point(338, 109);
+			this->label1->Name = L"label1";
+			this->label1->Size = System::Drawing::Size(37, 13);
+			this->label1->TabIndex = 0;
+			this->label1->Text = L"Result";
+			this->label1->Click += gcnew System::EventHandler(this, &MyForm::label1_Click);
+			// 
+			// button1
+			// 
+			this->button1->Location = System::Drawing::Point(218, 104);
 			this->button1->Name = L"button1";
-			this->button1->Size = System::Drawing::Size(25, 23);
-			this->button1->TabIndex = 0;
+			this->button1->Size = System::Drawing::Size(38, 23);
+			this->button1->TabIndex = 1;
 			this->button1->Text = L"=";
 			this->button1->UseVisualStyleBackColor = true;
 			this->button1->Click += gcnew System::EventHandler(this, &MyForm::button1_Click);
-			this->textBox1->Location = System::Drawing::Point(31, 118);
+			// 
+			// textBox1
+			// 
+			this->textBox1->Location = System::Drawing::Point(12, 106);
 			this->textBox1->Name = L"textBox1";
-			this->textBox1->Size = System::Drawing::Size(239, 20);
-			this->textBox1->TabIndex = 1;
-			this->label1->AutoSize = true;
-			this->label1->Location = System::Drawing::Point(307, 121);
-			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(37, 13);
-			this->label1->TabIndex = 2;
-			this->label1->Text = L"Result";
-			this->label2->AutoSize = true;
-			this->label2->Location = System::Drawing::Point(28, 167);
-			this->label2->Name = L"label2";
-			this->label2->Size = System::Drawing::Size(38, 13);
-			this->label2->TabIndex = 3;
-			this->label2->Text = L"Postfix";
+			this->textBox1->Size = System::Drawing::Size(200, 20);
+			this->textBox1->TabIndex = 2;
+			this->textBox1->TextChanged += gcnew System::EventHandler(this, &MyForm::textBox1_TextChanged);
+			// 
+			// MyForm
+			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(565, 269);
-			this->Controls->Add(this->label2);
-			this->Controls->Add(this->label1);
+			this->ClientSize = System::Drawing::Size(476, 261);
 			this->Controls->Add(this->textBox1);
 			this->Controls->Add(this->button1);
+			this->Controls->Add(this->label1);
 			this->Name = L"MyForm";
 			this->Text = L"MyForm";
 			this->ResumeLayout(false);
@@ -98,11 +104,24 @@ namespace CppWinForm1 {
 		}
 #pragma endregion
 	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
-		std::string infix = msclr::interop::marshal_as<std::string>(textBox1->Text);
-		TCalculator calculator;
-		calculator.SetExpr(infix);
-		calculator.ToPostfix();		double res = calculator.Calc();
-		label1->Text = Convert::ToString(res);	
+		try {
+			std::string inf;
+			inf = msclr::interop::marshal_as<std::string>(textBox1->Text);
+			TCalculator calc;
+			calc.SetExpr(inf);
+			if (!calc.CheckBrackets()) throw - 1;
+			calc.ToPostfix();
+			double res = calc.Calc();
+			label1->Text = Convert::ToString(res);
+		}
+		catch (int ex) {
+			label1->Text = "error";
+		}
+		//label1->Text = gcnew System::String(inf.c_str());
+	}
+	private: System::Void label1_Click(System::Object^  sender, System::EventArgs^  e) {
+	}
+	private: System::Void textBox1_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 	}
 	};
 }
