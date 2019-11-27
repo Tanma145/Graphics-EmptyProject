@@ -115,7 +115,7 @@ namespace CppWinForm1 {
 			label1->Text = Convert::ToString(res);
 		}
 		catch (int ex) {
-			label1->Text = "error";
+			label1->Text = "oof error";
 		}
 		//label1->Text = gcnew System::String(inf.c_str());
 	}
